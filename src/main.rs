@@ -1,19 +1,24 @@
-use actix_web::{get, web, App, HttpServer, Responder};
+use actix_web::{
+    web::{self}, App, HttpRequest, HttpServer, Responder
+};
 
-#[get("/")]
-async fn index() -> impl Responder {
-    "Hello, World!"
-}
-
-#[get("/{name}")]
-async fn hello(name: web::Path<String>) -> impl Responder {
+async fn greet(req: HttpRequest) -> impl Responder {
+    let name = req.match_info().get("name").unwrap_or("World");
     format!("Hello {}!", &name)
 }
 
-#[actix_web::main]
+#[tokio::main]
 async fn main() -> std::io::Result<()> {
-    HttpServer::new(|| App::new().service(index).service(hello))
-        .bind(("127.0.0.1", 8080))?
-        .run()
-        .await
+    // HttpServer is the backbone of our application.
+    // Handles all the transport layer of our application.
+    HttpServer::new(|| {
+        // After HttpServer has established a new connection with a client,
+        // App start handling all the request to the APIs.
+        App::new()
+            .route("/", web::get().to(greet))
+            .route("/{name}", web::get().to(greet))
+    })
+    .bind(("127.0.0.1", 8080))?
+    .run()
+    .await
 }
