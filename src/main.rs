@@ -1,5 +1,6 @@
 use actix_web::{
-    web::{self}, App, HttpRequest, HttpServer, Responder
+    App, HttpRequest, HttpServer, Responder,
+    web::{self}
 };
 
 async fn greet(req: HttpRequest) -> impl Responder {
