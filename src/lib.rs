@@ -1,3 +1,5 @@
+use std::net::TcpListener;
+
 use actix_web::{
     App, HttpResponse, HttpServer, Responder,
     dev::Server,
@@ -8,15 +10,16 @@ async fn health_check() -> impl Responder {
     HttpResponse::Ok()
 }
 
-pub fn run() -> Result<Server, std::io::Error> {
+pub fn run(listener: TcpListener) -> Result<Server, std::io::Error> {
     // HttpServer is the backbone of our application.
     // Handles all the transport layer of our application.
+
     let server = HttpServer::new(|| {
         // After HttpServer has established a new connection with a client,
         // App start handling all the request to the APIs.
         App::new().route("/health_check", web::get().to(health_check))
     })
-    .bind(("127.0.0.1", 8000))?
+    .listen(listener)?
     .run();
     //.await
 
