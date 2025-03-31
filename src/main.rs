@@ -1,25 +1,15 @@
-use actix_web::{
-    App, HttpRequest, HttpServer, Responder,
-    web::{self},
-};
-
-async fn greet(req: HttpRequest) -> impl Responder {
-    let name = req.match_info().get("name").unwrap_or("World");
-    format!("Hello {}!", &name)
-}
+use std::net::TcpListener;
 
 #[tokio::main]
-async fn main() -> std::io::Result<()> {
-    // HttpServer is the backbone of our application.
-    // Handles all the transport layer of our application.
-    HttpServer::new(|| {
-        // After HttpServer has established a new connection with a client,
-        // App start handling all the request to the APIs.
-        App::new()
-            .route("/", web::get().to(greet))
-            .route("/{name}", web::get().to(greet))
-    })
-    .bind(("127.0.0.1", 8080))?
-    .run()
-    .await
+async fn main() {
+    // bind port 0 will trigger an OS scan for an available port which will then be bound to the application
+    let listener = TcpListener::bind("127.0.0.1:0").expect("Failed to bind random port");
+
+    // let port = listener.local_addr().unwrap().port();
+    let server = zero2prod::run(listener).expect("Failed to bind address");
+
+    // Launch server as a background task thanks to tokio::spawn
+    tokio::spawn(server);
+
+    // format!("http://127.0.0.1:{}", port)
 }
