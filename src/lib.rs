@@ -6,11 +6,17 @@ use actix_web::{
     web::{self},
 };
 
+#[derive(serde::Deserialize)]
+struct FormData {
+    email: String,
+    name: String,
+}
+
 async fn health_check() -> impl Responder {
     HttpResponse::Ok().finish()
 }
 
-async fn subscribe() -> HttpResponse {
+async fn subscribe(_form: web::Form<FormData>) -> HttpResponse {
     HttpResponse::Ok().finish()
 }
 
@@ -22,9 +28,7 @@ pub fn run(listener: TcpListener) -> Result<Server, std::io::Error> {
         // After HttpServer has established a new connection with a client,
         // App start handling all the request to the APIs.
         App::new()
-
             .route("/health_check", web::get().to(health_check))
-
             // A new entry in our routing table for POST /subscriptions requests
             .route("/subscriptions", web::post().to(subscribe))
     })
