@@ -68,7 +68,7 @@ async fn subscribe_returns_a_400_when_data_is_missing() {
 
         // Assert
         assert!(
-            response.status().is_server_error(),
+            response.status().is_client_error(),
             "The API did not fail with 400 Bad Request when the payload was {}.",
             err_msg
         )
