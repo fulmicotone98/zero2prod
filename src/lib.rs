@@ -8,8 +8,8 @@ use actix_web::{
 
 #[derive(serde::Deserialize)]
 struct FormData {
-    email: String,
-    name: String,
+    _email: String,
+    _name: String,
 }
 
 async fn health_check() -> impl Responder {
