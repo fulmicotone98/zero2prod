@@ -6,8 +6,18 @@ use actix_web::{
     web::{self},
 };
 
+#[derive(serde::Deserialize)]
+struct FormData {
+    email: String,
+    name: String,
+}
+
 async fn health_check() -> impl Responder {
-    HttpResponse::Ok()
+    HttpResponse::Ok().finish()
+}
+
+async fn subscribe(_form: web::Form<FormData>) -> HttpResponse {
+    HttpResponse::Ok().finish()
 }
 
 pub fn run(listener: TcpListener) -> Result<Server, std::io::Error> {
@@ -17,7 +27,10 @@ pub fn run(listener: TcpListener) -> Result<Server, std::io::Error> {
     let server = HttpServer::new(|| {
         // After HttpServer has established a new connection with a client,
         // App start handling all the request to the APIs.
-        App::new().route("/health_check", web::get().to(health_check))
+        App::new()
+            .route("/health_check", web::get().to(health_check))
+            // A new entry in our routing table for POST /subscriptions requests
+            .route("/subscriptions", web::post().to(subscribe))
     })
     .listen(listener)?
     .run();

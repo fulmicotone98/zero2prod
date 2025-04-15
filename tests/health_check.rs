@@ -24,6 +24,57 @@ async fn health_check_works() {
     assert_eq!(Some(0), response.content_length());
 }
 
+#[tokio::test]
+async fn subscribe_returns_a_200_for_valid_form_data() {
+    //Arrange
+    let address = spawn_app();
+    let client = reqwest::Client::new();
+
+    //Act
+    let body = "name=fulmicotone98&email=fulmicotone98%40gmail.com";
+    let response = client
+        .post(format!("{}/subscriptions", address))
+        .header("Content-Type", "application/x-www-form-urlencoded")
+        .body(body)
+        .send()
+        .await
+        .expect("Failed to execute request");
+
+    //Assert
+    assert!(response.status().is_success());
+}
+
+/* Table-driven test / Parametrized test -> The same assertion is run against a set of known invalid input bodies that we expect to fail */
+#[tokio::test]
+async fn subscribe_returns_a_400_when_data_is_missing() {
+    // Arrange
+    let address = spawn_app();
+    let client = reqwest::Client::new();
+    let test_cases = vec![
+        ("name=fulmicotone98", "missing email"),
+        ("email=fulmicotone98%40gmail.com", "missing name"),
+        ("", "missing name and email"),
+    ];
+
+    for (invalid_body, err_msg) in test_cases {
+        // Act
+        let response = client
+            .post(format!("{}/subscriptions", address))
+            .header("Content_Type", "application/x-www-form-urlencoded")
+            .body(invalid_body)
+            .send()
+            .await
+            .expect("Failed to execute request");
+
+        // Assert
+        assert!(
+            response.status().is_client_error(),
+            "The API did not fail with 400 Bad Request when the payload was {}.",
+            err_msg
+        )
+    }
+}
+
 // Launch our application in the background ~somehow~
 fn spawn_app() -> String {
     // bind port 0 will trigger an OS scan for an available port which will then be bound to the application
