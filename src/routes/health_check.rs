@@ -1,6 +1,6 @@
-use crate::{configuration::get_configuration, startup};
+use crate::startup;
 use actix_web::{HttpResponse, Responder};
-use sqlx::{Connection, PgConnection};
+use sqlx::Connection;
 use std::net::TcpListener;
 
 pub async fn health_check() -> impl Responder {
@@ -35,10 +35,11 @@ async fn health_check_works() {
 async fn subscribe_returns_a_200_for_valid_form_data() {
     // Arrange
     let app_address = spawn_app();
-    let configuration = get_configuration().expect("Failed to get configuration from file");
+    let configuration =
+        crate::configuration::get_configuration().expect("Failed to get configuration from file");
     let connection_string = configuration.database.connection_string();
 
-    let mut connection = PgConnection::connect(&connection_string)
+    let mut connection = sqlx::PgConnection::connect(&connection_string)
         .await
         .expect("Failed to connect to Postgres");
 

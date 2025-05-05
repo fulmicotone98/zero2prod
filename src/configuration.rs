@@ -18,14 +18,12 @@ pub struct DBSettings {
 }
 
 pub fn get_configuration() -> Result<Settings, ConfigError> {
-    // Initialise configuration reader
-    let mut settings = config::Config::default();
+    // Initialise configuration reader using ConfigBuilder
+    let settings = config::Config::builder()
+        .add_source(config::File::with_name("configuration"))
+        .build()?;
 
-    // Add configuration values from a 'configuration' file
-    // Looks for top-level file with an extensions tht 'config' can parse
-    settings.merge(config::File::with_name("configuration"))?;
-
-    settings.try_into()
+    settings.try_deserialize::<Settings>()
 }
 
 impl DBSettings {
