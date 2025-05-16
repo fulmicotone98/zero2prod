@@ -1,8 +1,8 @@
-use zero2prod::configuration::{DBSettings, get_configuration};
-use zero2prod::startup::run;
 use sqlx::{Connection, Executor, PgConnection, PgPool};
 use std::net::TcpListener;
 use uuid::Uuid;
+use zero2prod::configuration::{DBSettings, get_configuration};
+use zero2prod::startup::run;
 
 pub struct TestApp {
     pub address: String,
@@ -147,4 +147,3 @@ async fn subscribe_returns_a_400_when_data_is_missing() {
         )
     }
 }
-
