@@ -65,6 +65,9 @@ jobs:
       - name: Migrate database
         run: SKIP_DOCKER=true ./scripts/init_db.sh
 
+      - name: Cargo clean
+        run: cargo clean
+
       - name: Check that queries are fresh
         run: cargo sqlx prepare --workspace --check -- --all-targets
         
