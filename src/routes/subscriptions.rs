@@ -1,6 +1,7 @@
 use actix_web::{HttpResponse, web};
 use sqlx::PgPool;
-use uuid::Uuid;
+#[allow(unused_imports)]
+use sqlx::types::Uuid;
 
 #[derive(serde::Deserialize)]
 pub struct FormData {
