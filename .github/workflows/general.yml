@@ -69,7 +69,7 @@ jobs:
         run: cargo clean
         
       - name: Sqlx prepare
-        run: cargo sqlx prepare
+        run: cargo sqlx prepare --verbose
 
       - name: Check that queries are fresh
         run: cargo sqlx prepare --workspace --check -- --all-targets
