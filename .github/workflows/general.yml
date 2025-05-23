@@ -64,7 +64,10 @@ jobs:
 
       - name: Migrate database
         run: SKIP_DOCKER=true ./scripts/init_db.sh
-
+        
+      - name: Cargo clean
+        run: cargo clean
+        
       - name: Sqlx prepare
         run: cargo sqlx prepare
 
