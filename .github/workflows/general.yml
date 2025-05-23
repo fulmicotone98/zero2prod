@@ -41,7 +41,7 @@ jobs:
       # This GitHub Action installs a Rust toolchain using rustup. It is designed for one-line concise usage and good defaults.
       # It also takes care of caching intermediate build artifacts.
       - name: Install the Rust toolchain
-        uses: dtolnay/rust-toolchain@stable
+        uses: actions-rust-lang/setup-rust-toolchain@v1
 
       - name: Install sqlx-cli
         run: cargo install sqlx-cli
@@ -80,7 +80,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@stable
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
         with:
           components: rustfmt
       - name: Enforce formatting
