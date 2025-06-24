@@ -1,9 +1,14 @@
+use env_logger::Env;
 use sqlx::PgPool;
 use std::net::TcpListener;
 use zero2prod::{configuration::get_configuration, startup::run};
 
 #[tokio::main]
 async fn main() -> std::io::Result<()> {
+    // Activating environment logging.
+    // We are calling just info-level logs if the RUST_LOG env variable has not been set.
+    env_logger::Builder::from_env(Env::default().default_filter_or("info")).init();
+
     // Read configuration file
     let configuration = get_configuration().expect("Failed to read application configuration file");
     let address = format!("127.0.0.1:{}", configuration.app_port);
