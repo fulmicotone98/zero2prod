@@ -14,7 +14,12 @@ pub struct FormData {
 pub async fn subscribe(form: web::Form<FormData>, pg_pool: web::Data<PgPool>) -> HttpResponse {
     let req_id = Uuid::new_v4();
 
-    log::info!("req_id: {} - Adding {}, {} as new subscriber", req_id, form.email, form.name);
+    log::info!(
+        "req_id: {} - Adding {}, {} as new subscriber",
+        req_id,
+        form.email,
+        form.name
+    );
     log::info!("req_id: {} - Saving new subscriber in the database", req_id);
     sqlx::query!(
         r#"INSERT INTO subscriptions (id, email, name, subscribed_at) VALUES ($1, $2, $3, $4)"#,
