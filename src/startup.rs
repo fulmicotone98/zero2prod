@@ -1,6 +1,6 @@
 use crate::routes::health_check::health_check;
 use crate::routes::subscriptions::*;
-use actix_web::{App, HttpServer, dev::Server, web};
+use actix_web::{App, HttpServer, dev::Server, middleware::Logger, web};
 use sqlx::PgPool;
 use std::net::TcpListener;
 
@@ -16,6 +16,7 @@ pub fn run(listener: TcpListener, db_pool: PgPool) -> Result<Server, std::io::Er
         // After HttpServer has established a new connection with a client,
         // App start handling all the request to the APIs.
         App::new()
+            .wrap(Logger::default())
             .route("/health_check", web::get().to(health_check))
             // A new entry in our routing table for POST /subscriptions requests
             .route("/subscriptions", web::post().to(subscribe))
