@@ -1,18 +1,26 @@
-use crate::routes::{health_check::*, subscriptions::*};
+use crate::routes::health_check::health_check;
+use crate::routes::subscriptions::*;
 use actix_web::{App, HttpServer, dev::Server, web};
+use sqlx::PgPool;
 use std::net::TcpListener;
 
-pub fn run(listener: TcpListener) -> Result<Server, std::io::Error> {
+pub fn run(listener: TcpListener, db_pool: PgPool) -> Result<Server, std::io::Error> {
     // HttpServer is the backbone of our application.
     // Handles all the transport layer of our application.
 
-    let server = HttpServer::new(|| {
+    // The Data struct of actix-web simply wraps the connection into an Arc smart pointer
+    // This allows to clone the connection inside multiple App istances in different Workers
+    let db_pool = web::Data::new(db_pool);
+
+    let server = HttpServer::new(move || {
         // After HttpServer has established a new connection with a client,
         // App start handling all the request to the APIs.
         App::new()
             .route("/health_check", web::get().to(health_check))
             // A new entry in our routing table for POST /subscriptions requests
             .route("/subscriptions", web::post().to(subscribe))
+            //Update the application state with piece of stateful data
+            .app_data(db_pool.clone())
     })
     .listen(listener)?
     .run();
